@@ -2,9 +2,13 @@ import React, { useEffect, useRef, KeyboardEvent } from "react";
 import "./App.css";
 import Board from "./components/Board/Board";
 import { useState } from "react";
-import { convertDirection, moveRobot } from "./helpers";
+import {
+  convertArrowToRobotCommand,
+  convertCommandToGeography,
+  moveRobot,
+} from "./helpers";
 
-import { Coordinate, ArrowDirection, RobotTextCommand } from "./types";
+import { Coordinate, ArrowDirection, RobotCommand } from "./types";
 
 const App = () => {
   const robotInitialCoordinate: Coordinate = [0, 0];
@@ -12,13 +16,13 @@ const App = () => {
     robotInitialCoordinate
   );
   const [robotCommandList, setRobotCommandList] = useState<
-    RobotTextCommand | string
+    RobotCommand | string
   >("");
   const [report, setReport] = useState<string>("");
   const screenRef = useRef<HTMLDivElement>(null);
 
   const informationText = "press the arrow keys or use the text input to begin";
-  const inputPlaceholderText = "enter N,S,Ö,V";
+  const inputPlaceholderText = "enter L,R,F,B";
 
   const reset = () => {
     setRobotCoordinate(robotInitialCoordinate);
@@ -28,8 +32,9 @@ const App = () => {
 
   useEffect(() => {
     if (robotCommandList.length >= 10) {
-      const report = `Report: ${robotCoordinate} ${robotCommandList.charAt(
-        robotCommandList.length - 1
+      const lastCommand = robotCommandList.charAt(robotCommandList.length - 1);
+      const report = `Report: ${robotCoordinate} ${convertCommandToGeography(
+        lastCommand as RobotCommand
       )}`;
       setReport(report);
     }
@@ -52,8 +57,9 @@ const App = () => {
     ) {
       const newRobotCoordinate = moveRobot(robotCoordinate, movementKey);
       setRobotCoordinate(newRobotCoordinate);
-      setRobotCommandList((prev) => prev + convertDirection(movementKey));
-      console.log(newRobotCoordinate);
+      setRobotCommandList(
+        (prev) => prev + convertArrowToRobotCommand(movementKey)
+      );
     }
   };
 
@@ -63,15 +69,12 @@ const App = () => {
       return;
     }
     if (
-      lastCommand === RobotTextCommand.UP ||
-      lastCommand === RobotTextCommand.Down ||
-      lastCommand === RobotTextCommand.Right ||
-      lastCommand === RobotTextCommand.Left
+      lastCommand === RobotCommand.UP ||
+      lastCommand === RobotCommand.Down ||
+      lastCommand === RobotCommand.Right ||
+      lastCommand === RobotCommand.Left
     ) {
-      const newRobotCoordinate = moveRobot(
-        robotCoordinate,
-        lastCommand as RobotTextCommand
-      );
+      const newRobotCoordinate = moveRobot(robotCoordinate, lastCommand);
       setRobotCoordinate(newRobotCoordinate);
       setRobotCommandList(commands);
     }
@@ -93,17 +96,19 @@ const App = () => {
       tabIndex={0}
       ref={screenRef}
     >
-      <p className='InformationText'>{robotCommandList.length === 0 && informationText}</p>
+      <p className="InformationText">
+        {robotCommandList.length === 0 && informationText}
+      </p>
       <p className="ReportText">{report}</p>
       <Board robotCoordinate={robotCoordinate} />
       <input
+        className="Input"
         value={robotCommandList}
         onChange={(event) =>
           onTextInputChange(event.target.value.toUpperCase())
         }
         onKeyDown={(event) => handleInputKeyDown(event)}
         placeholder={inputPlaceholderText}
-        className="Input"
       />
       <button onClick={reset} className="ResetButton">
         reset

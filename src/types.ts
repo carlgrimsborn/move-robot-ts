@@ -5,11 +5,18 @@ export enum ArrowDirection {
   Left = "ArrowLeft",
 }
 
-export enum RobotTextCommand {
-  UP = "N",
-  Down = "S",
-  Right = "Ö",
-  Left = "V",
+export enum RobotCommand {
+  UP = "F",
+  Down = "B",
+  Right = "R",
+  Left = "L",
+}
+
+export enum GeographyDirection {
+  North = "N",
+  South = "S",
+  East = "Ö",
+  West = "V",
 }
 
 export type Coordinate = [number, number];
