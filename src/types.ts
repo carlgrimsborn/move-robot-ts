@@ -6,10 +6,10 @@ export enum Direction {
 }
 
 export enum RobotCommand {
-  UP = "U",
-  Down = "D",
-  Right = "R",
-  Left = "L",
+  UP = "N",
+  Down = "S",
+  Right = "Ö",
+  Left = "V",
 }
 
 export type Coordinate = [number, number];

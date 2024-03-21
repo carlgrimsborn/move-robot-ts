@@ -11,23 +11,36 @@ const App = () => {
   const [robotCoordinate, setRobotCoordinate] = useState<Coordinate>(
     robotInitialCoordinate
   );
-  const [robotCommandMap, setRobotCommandMap] = useState<RobotCommand | string>(
-    ""
-  );
+  const [robotCommandList, setRobotCommandList] = useState<
+    RobotCommand | string
+  >("");
+  const [report, setReport] = useState<string>("");
   const screenRef = useRef<HTMLDivElement>(null);
+
+  const reset = () => {
+    setRobotCoordinate(robotInitialCoordinate);
+    setRobotCommandList("");
+    setReport("");
+  };
+
+  useEffect(() => {
+    if (robotCommandList.length >= 10) {
+      const report = `Report: ${robotCoordinate} ${robotCommandList.charAt(
+        robotCommandList.length - 1
+      )}`;
+      setReport(report);
+    }
+  }, [robotCommandList]);
 
   // Focuses the screen on load
   useEffect(() => {
     screenRef.current?.focus();
   }, []);
 
-  const onReset = () => {
-    setRobotCoordinate(robotInitialCoordinate);
-    setRobotCommandMap("");
-  };
-
-  const onMovement = (movementKey: string) => {
-    console.log(movementKey);
+  const onArrowKeyMovement = (movementKey: string) => {
+    if (report.length > 0) {
+      return;
+    }
     if (
       movementKey === Direction.Up ||
       movementKey === Direction.Down ||
@@ -36,7 +49,7 @@ const App = () => {
     ) {
       const newRobotCoordinate = moveRobot(robotCoordinate, movementKey);
       setRobotCoordinate(newRobotCoordinate);
-      setRobotCommandMap((prev) => prev + convertDirection(movementKey));
+      setRobotCommandList((prev) => prev + convertDirection(movementKey));
       console.log(newRobotCoordinate);
     }
   };
@@ -44,14 +57,14 @@ const App = () => {
   return (
     <div
       className="App"
-      onKeyDown={(event) => onMovement(event.key)}
+      onKeyDown={(event) => onArrowKeyMovement(event.key)}
       tabIndex={0}
       ref={screenRef}
     >
-      <p>{robotCoordinate[0] + "," + robotCoordinate[1]}</p>
+      <p>{report}</p>
       <Board robotCoordinate={robotCoordinate} />
-      <p>{robotCommandMap}</p>
-      <button onClick={onReset}>reset</button>
+      <p>{robotCommandList}</p>
+      <button onClick={reset}>reset</button>
     </div>
   );
 };

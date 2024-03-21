@@ -36,9 +36,25 @@ export const moveRobot = (
     default:
       break;
   }
-  const outOfBounds = y > 2 || y < -2 || x > 2 || x < -2;
-  if (outOfBounds) {
-    return coordinate;
+
+  const position = convertOutOfBounds([y, x]);
+  return position;
+};
+
+const convertOutOfBounds = (coordinate: Coordinate): Coordinate => {
+  let y = coordinate[0];
+  let x = coordinate[1];
+  if (y > 2) {
+    y = -2;
+  }
+  if (y < -2) {
+    y = 2;
+  }
+  if (x > 2) {
+    x = -2;
+  }
+  if (x < -2) {
+    x = 2;
   }
   return [y, x];
 };
