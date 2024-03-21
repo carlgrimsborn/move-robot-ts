@@ -17,6 +17,9 @@ const App = () => {
   const [report, setReport] = useState<string>("");
   const screenRef = useRef<HTMLDivElement>(null);
 
+  const informationText = "press the arrow keys or use the text input to begin";
+  const inputPlaceholderText = "enter N,S,Ö,V";
+
   const reset = () => {
     setRobotCoordinate(robotInitialCoordinate);
     setRobotCommandList("");
@@ -90,12 +93,14 @@ const App = () => {
       tabIndex={0}
       ref={screenRef}
     >
+      <p>{robotCommandList.length === 0 && informationText}</p>
       <p>{report}</p>
       <Board robotCoordinate={robotCoordinate} />
       <input
         value={robotCommandList}
         onChange={(event) => onTextInputMovement(event.target.value)}
         onKeyDown={(event) => handleInputKeyDown(event)}
+        placeholder={inputPlaceholderText}
       />
       <button onClick={reset}>reset</button>
     </div>
