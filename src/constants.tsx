@@ -1,4 +1,4 @@
-import { Coordinate } from "./interfaces";
+import { Coordinate } from "./types";
 
 export const coordinates: Array<Coordinate> = [
   [2, -2],

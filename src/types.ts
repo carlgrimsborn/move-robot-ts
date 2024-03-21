@@ -4,3 +4,12 @@ export enum Direction {
   Right = "ArrowRight",
   Left = "ArrowLeft",
 }
+
+export enum RobotCommand {
+  UP = "U",
+  Down = "D",
+  Right = "R",
+  Left = "L",
+}
+
+export type Coordinate = [number, number];

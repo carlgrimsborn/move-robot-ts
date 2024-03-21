@@ -1,6 +1,4 @@
-import { Coordinate } from "./interfaces";
-import { Direction } from "./types";
-
+import { Coordinate, Direction, RobotCommand } from "./types";
 
 export const arraysAreEqual = <T>(array1: T[], array2: T[]): boolean => {
   if (array1.length !== array2.length) {
@@ -38,5 +36,32 @@ export const moveRobot = (
     default:
       break;
   }
+  const outOfBounds = y > 2 || y < -2 || x > 2 || x < -2;
+  if (outOfBounds) {
+    return coordinate;
+  }
   return [y, x];
+};
+
+export const convertDirection = <T extends Direction | RobotCommand>(
+  direction: T
+) => {
+  switch (direction) {
+    case Direction.Up:
+      return RobotCommand.UP;
+    case Direction.Down:
+      return RobotCommand.Down;
+    case Direction.Right:
+      return RobotCommand.Right;
+    case Direction.Left:
+      return RobotCommand.Left;
+    case RobotCommand.UP:
+      return Direction.Up;
+    case RobotCommand.Down:
+      return Direction.Down;
+    case RobotCommand.Right:
+      return Direction.Right;
+    case RobotCommand.Left:
+      return Direction.Left;
+  }
 };

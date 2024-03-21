@@ -3,7 +3,7 @@ import React from "react";
 import Square from "../Square/Square";
 import "./Row.css";
 import { arraysAreEqual } from "../../helpers";
-import { Coordinate } from "../../interfaces";
+import { Coordinate } from "../../types";
 
 interface IRow {
   coordinates: Coordinate[];

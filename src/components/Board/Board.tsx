@@ -1,8 +1,9 @@
 import React from "react";
 import "./Board.css";
 import { coordinates } from "../../constants";
-import { Coordinate } from "../../interfaces";
+
 import Row from "../Row/Row";
+import { Coordinate } from "../../types";
 
 interface IBoard {
   robotCoordinate: Coordinate;
