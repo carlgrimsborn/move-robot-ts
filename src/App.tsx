@@ -57,7 +57,7 @@ const App = () => {
     }
   };
 
-  const onTextInputMovement = (commands: string) => {
+  const onTextInputChange = (commands: string) => {
     const lastCommand = commands.charAt(commands.length - 1);
     if (report.length > 0) {
       return;
@@ -93,16 +93,21 @@ const App = () => {
       tabIndex={0}
       ref={screenRef}
     >
-      <p>{robotCommandList.length === 0 && informationText}</p>
-      <p>{report}</p>
+      <p className='InformationText'>{robotCommandList.length === 0 && informationText}</p>
+      <p className="ReportText">{report}</p>
       <Board robotCoordinate={robotCoordinate} />
       <input
         value={robotCommandList}
-        onChange={(event) => onTextInputMovement(event.target.value)}
+        onChange={(event) =>
+          onTextInputChange(event.target.value.toUpperCase())
+        }
         onKeyDown={(event) => handleInputKeyDown(event)}
         placeholder={inputPlaceholderText}
+        className="Input"
       />
-      <button onClick={reset}>reset</button>
+      <button onClick={reset} className="ResetButton">
+        reset
+      </button>
     </div>
   );
 };
