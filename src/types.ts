@@ -1,11 +1,11 @@
-export enum Direction {
+export enum ArrowDirection {
   Up = "ArrowUp",
   Down = "ArrowDown",
   Right = "ArrowRight",
   Left = "ArrowLeft",
 }
 
-export enum RobotCommand {
+export enum RobotTextCommand {
   UP = "N",
   Down = "S",
   Right = "Ö",

@@ -1,4 +1,4 @@
-import { Coordinate, Direction, RobotCommand } from "./types";
+import { Coordinate, ArrowDirection, RobotTextCommand } from "./types";
 
 export const arraysAreEqual = <T>(array1: T[], array2: T[]): boolean => {
   if (array1.length !== array2.length) {
@@ -16,21 +16,26 @@ export const arraysAreEqual = <T>(array1: T[], array2: T[]): boolean => {
 
 export const moveRobot = (
   coordinate: Coordinate,
-  direction: Direction
+  direction: ArrowDirection | RobotTextCommand
 ): Coordinate => {
   let y = coordinate[0];
   let x = coordinate[1];
+  console.log(direction === RobotTextCommand.UP);
   switch (direction) {
-    case Direction.Up:
+    case ArrowDirection.Up:
+    case RobotTextCommand.UP:
       y = y + 1;
       break;
-    case Direction.Down:
+    case ArrowDirection.Down:
+    case RobotTextCommand.Down:
       y = y - 1;
       break;
-    case Direction.Right:
+    case ArrowDirection.Right:
+    case RobotTextCommand.Right:
       x = x + 1;
       break;
-    case Direction.Left:
+    case ArrowDirection.Left:
+    case RobotTextCommand.Left:
       x = x - 1;
       break;
     default:
@@ -59,25 +64,25 @@ const convertOutOfBounds = (coordinate: Coordinate): Coordinate => {
   return [y, x];
 };
 
-export const convertDirection = <T extends Direction | RobotCommand>(
+export const convertDirection = <T extends ArrowDirection | RobotTextCommand>(
   direction: T
 ) => {
   switch (direction) {
-    case Direction.Up:
-      return RobotCommand.UP;
-    case Direction.Down:
-      return RobotCommand.Down;
-    case Direction.Right:
-      return RobotCommand.Right;
-    case Direction.Left:
-      return RobotCommand.Left;
-    case RobotCommand.UP:
-      return Direction.Up;
-    case RobotCommand.Down:
-      return Direction.Down;
-    case RobotCommand.Right:
-      return Direction.Right;
-    case RobotCommand.Left:
-      return Direction.Left;
+    case ArrowDirection.Up:
+      return RobotTextCommand.UP;
+    case ArrowDirection.Down:
+      return RobotTextCommand.Down;
+    case ArrowDirection.Right:
+      return RobotTextCommand.Right;
+    case ArrowDirection.Left:
+      return RobotTextCommand.Left;
+    case RobotTextCommand.UP:
+      return ArrowDirection.Up;
+    case RobotTextCommand.Down:
+      return ArrowDirection.Down;
+    case RobotTextCommand.Right:
+      return ArrowDirection.Right;
+    case RobotTextCommand.Left:
+      return ArrowDirection.Left;
   }
 };

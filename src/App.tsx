@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, KeyboardEvent } from "react";
 import "./App.css";
 import Board from "./components/Board/Board";
 import { useState } from "react";
 import { convertDirection, moveRobot } from "./helpers";
 
-import { Coordinate, Direction, RobotCommand } from "./types";
+import { Coordinate, ArrowDirection, RobotTextCommand } from "./types";
 
 const App = () => {
   const robotInitialCoordinate: Coordinate = [0, 0];
@@ -12,7 +12,7 @@ const App = () => {
     robotInitialCoordinate
   );
   const [robotCommandList, setRobotCommandList] = useState<
-    RobotCommand | string
+    RobotTextCommand | string
   >("");
   const [report, setReport] = useState<string>("");
   const screenRef = useRef<HTMLDivElement>(null);
@@ -42,15 +42,44 @@ const App = () => {
       return;
     }
     if (
-      movementKey === Direction.Up ||
-      movementKey === Direction.Down ||
-      movementKey === Direction.Right ||
-      movementKey === Direction.Left
+      movementKey === ArrowDirection.Up ||
+      movementKey === ArrowDirection.Down ||
+      movementKey === ArrowDirection.Right ||
+      movementKey === ArrowDirection.Left
     ) {
       const newRobotCoordinate = moveRobot(robotCoordinate, movementKey);
       setRobotCoordinate(newRobotCoordinate);
       setRobotCommandList((prev) => prev + convertDirection(movementKey));
       console.log(newRobotCoordinate);
+    }
+  };
+
+  const onTextInputMovement = (commands: string) => {
+    const lastCommand = commands.charAt(commands.length - 1);
+    if (report.length > 0) {
+      return;
+    }
+    if (
+      lastCommand === RobotTextCommand.UP ||
+      lastCommand === RobotTextCommand.Down ||
+      lastCommand === RobotTextCommand.Right ||
+      lastCommand === RobotTextCommand.Left
+    ) {
+      const newRobotCoordinate = moveRobot(
+        robotCoordinate,
+        lastCommand as RobotTextCommand
+      );
+      setRobotCoordinate(newRobotCoordinate);
+      setRobotCommandList(commands);
+    }
+  };
+
+  //disabling deleting in the input field
+  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    const keyCode = event.keyCode || event.which;
+
+    if (keyCode === 8 || keyCode === 46) {
+      event.preventDefault();
     }
   };
 
@@ -63,7 +92,11 @@ const App = () => {
     >
       <p>{report}</p>
       <Board robotCoordinate={robotCoordinate} />
-      <p>{robotCommandList}</p>
+      <input
+        value={robotCommandList}
+        onChange={(event) => onTextInputMovement(event.target.value)}
+        onKeyDown={(event) => handleInputKeyDown(event)}
+      />
       <button onClick={reset}>reset</button>
     </div>
   );
