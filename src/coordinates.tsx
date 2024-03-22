@@ -30,7 +30,7 @@ export const squareCoordinates: Array<Coordinate> = [
 
 export const circleCoordinates: Array<Coordinate> = [
   [4, 0],
-  [4, 4],
+  [4, 1],
   [3, -1],
   [3, 0],
   [3, 1],
