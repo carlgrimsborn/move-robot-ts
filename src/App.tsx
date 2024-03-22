@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, KeyboardEvent } from "react";
 import "./App.css";
-import Board from "./components/Board/Board";
+import Board, { BoardVariant } from "./components/Board/Board";
 import { useState } from "react";
 import {
   convertArrowToRobotCommand,
@@ -11,12 +11,13 @@ import {
 import { Coordinate, ArrowDirection, RobotCommand } from "./types";
 
 const App = () => {
-  const robotInitialCoordinate: Coordinate = [1, 2];
+  const squareInitialCoordinate: Coordinate = [1, 2];
   const [robotCoordinate, setRobotCoordinate] = useState<Coordinate>(
-    robotInitialCoordinate
+    squareInitialCoordinate
   );
   const [robotCommandList, setRobotCommandList] = useState<string>("");
   const [report, setReport] = useState<string>("");
+  const [boardVariant, setBoardVariant] = useState<BoardVariant>("square");
   const screenRef = useRef<HTMLDivElement>(null);
 
   const informationText = "press the arrow keys or use the text input to begin";
@@ -26,7 +27,7 @@ const App = () => {
   const IS_COMPLETED = robotCommandList.length >= 10;
 
   const reset = () => {
-    setRobotCoordinate(robotInitialCoordinate);
+    setRobotCoordinate([0, 0]);
     setRobotCommandList("");
     setReport("");
   };
@@ -57,7 +58,11 @@ const App = () => {
       movementKey === ArrowDirection.Right ||
       movementKey === ArrowDirection.Left
     ) {
-      const newRobotCoordinate = moveRobot(robotCoordinate, movementKey);
+      const newRobotCoordinate = moveRobot(
+        robotCoordinate,
+        movementKey,
+        boardVariant
+      );
       setRobotCoordinate(newRobotCoordinate);
       setRobotCommandList(
         (prev) => prev + convertArrowToRobotCommand(movementKey)
@@ -76,7 +81,11 @@ const App = () => {
       lastCommand === RobotCommand.Right ||
       lastCommand === RobotCommand.Left
     ) {
-      const newRobotCoordinate = moveRobot(robotCoordinate, lastCommand);
+      const newRobotCoordinate = moveRobot(
+        robotCoordinate,
+        lastCommand,
+        boardVariant
+      );
       setRobotCoordinate(newRobotCoordinate);
       setRobotCommandList(commands);
     }
@@ -88,6 +97,16 @@ const App = () => {
 
     if (keyCode === 8 || keyCode === 46) {
       event.preventDefault();
+    }
+  };
+
+  const toggleVariant = () => {
+    reset();
+    if (boardVariant === "square") {
+      setBoardVariant("circle");
+    } else {
+      setRobotCoordinate(squareInitialCoordinate);
+      setBoardVariant("square");
     }
   };
 
@@ -103,7 +122,7 @@ const App = () => {
       {!IS_COMPLETED && !IS_STARTED && (
         <p>commands left: {10 - robotCommandList.length}</p>
       )}
-      <Board robotCoordinate={robotCoordinate} />
+      <Board robotCoordinate={robotCoordinate} variant={boardVariant} />
       <input
         className="Input"
         value={robotCommandList}
@@ -116,6 +135,12 @@ const App = () => {
       <button onClick={reset} className="ResetButton">
         reset
       </button>
+      <div className="ToggleField">
+        <p>variant:</p>
+        <p onClick={toggleVariant} className="VariantText">
+          {boardVariant}
+        </p>
+      </div>
     </div>
   );
 };

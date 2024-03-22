@@ -1,3 +1,5 @@
+import { BoardVariant } from "./components/Board/Board";
+import { circleCoordinates } from "./constants";
 import {
   Coordinate,
   ArrowDirection,
@@ -21,11 +23,11 @@ export const arraysAreEqual = <T>(array1: T[], array2: T[]): boolean => {
 
 export const moveRobot = <T extends ArrowDirection | RobotCommand>(
   coordinate: Coordinate,
-  direction: T
+  direction: T,
+  variant: BoardVariant
 ): Coordinate => {
   let y = coordinate[0];
   let x = coordinate[1];
-  console.log(direction === RobotCommand.UP);
   switch (direction) {
     case ArrowDirection.Up:
     case RobotCommand.UP:
@@ -46,9 +48,24 @@ export const moveRobot = <T extends ArrowDirection | RobotCommand>(
     default:
       break;
   }
+  const newCoordinate: Coordinate = [y, x];
 
-  const position = convertOutOfBounds([y, x]);
-  return position;
+  if (variant === "square") {
+    const position = convertOutOfBounds(newCoordinate);
+    return position;
+  } else {
+    const outOfBoundsFound =
+      circleCoordinates.filter((circleCoordinate) =>
+        arraysAreEqual(circleCoordinate, newCoordinate)
+      ).length === 0;
+
+    console.log(outOfBoundsFound, newCoordinate);
+    if (outOfBoundsFound) {
+      return coordinate;
+    } else {
+      return newCoordinate;
+    }
+  }
 };
 
 const convertOutOfBounds = (coordinate: Coordinate): Coordinate => {
@@ -69,7 +86,9 @@ const convertOutOfBounds = (coordinate: Coordinate): Coordinate => {
   return [y, x];
 };
 
-export const convertArrowToRobotCommand = (direction: ArrowDirection): RobotCommand => {
+export const convertArrowToRobotCommand = (
+  direction: ArrowDirection
+): RobotCommand => {
   switch (direction) {
     case ArrowDirection.Up:
       return RobotCommand.UP;

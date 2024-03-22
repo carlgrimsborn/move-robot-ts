@@ -1,4 +1,10 @@
-.Board {
+.SquareBoard {
   display: flex;
   flex-direction: column;
+}
+
+.CircleBoard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

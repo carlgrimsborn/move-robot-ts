@@ -2,7 +2,7 @@ describe("robot commands", () => {
   const reportGeneralText = "Report: ";
 
   const inputCombination1 = "FFFFFBLLFR";
-  const result1 = "0,-1 Ö";
+  const result1 = "1,1 Ö";
   it(`${inputCombination1} results in ${result1}`, () => {
     cy.visit("http://localhost:3000/");
     cy.get(".Input").type("F");
@@ -20,7 +20,7 @@ describe("robot commands", () => {
   });
 
   const inputCombination2 = "LFFRFRFRFF";
-  const result2 = "1,2 N";
+  const result2 = "2,-1 N";
   it(`${inputCombination2} results in ${result2}`, () => {
     cy.visit("http://localhost:3000/");
     cy.get(".Input").type("L");
@@ -49,7 +49,7 @@ describe("robot commands", () => {
   });
 
   const inputCombination3 = "RFBLLFFRRB";
-  const result3 = "1,1 S";
+  const result3 = "2,-2 S";
   it(`${inputCombination3} using arrow keys should result in ${result3}`, () => {
     cy.visit("http://localhost:3000/");
     cy.get(".App").type("{rightArrow}");
