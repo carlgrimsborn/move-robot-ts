@@ -11,18 +11,19 @@ import {
 import { Coordinate, ArrowDirection, RobotCommand } from "./types";
 
 const App = () => {
-  const robotInitialCoordinate: Coordinate = [0, 0];
+  const robotInitialCoordinate: Coordinate = [1, 2];
   const [robotCoordinate, setRobotCoordinate] = useState<Coordinate>(
     robotInitialCoordinate
   );
-  const [robotCommandList, setRobotCommandList] = useState<
-    RobotCommand | string
-  >("");
+  const [robotCommandList, setRobotCommandList] = useState<string>("");
   const [report, setReport] = useState<string>("");
   const screenRef = useRef<HTMLDivElement>(null);
 
   const informationText = "press the arrow keys or use the text input to begin";
   const inputPlaceholderText = "enter L,R,F,B";
+  const maxCommands = 10;
+  const IS_STARTED = robotCommandList.length === 0;
+  const IS_COMPLETED = robotCommandList.length >= 10;
 
   const reset = () => {
     setRobotCoordinate(robotInitialCoordinate);
@@ -31,13 +32,14 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (robotCommandList.length >= 10) {
+    if (robotCommandList.length >= maxCommands) {
       const lastCommand = robotCommandList.charAt(robotCommandList.length - 1);
       const report = `Report: ${robotCoordinate} ${convertCommandToGeography(
         lastCommand as RobotCommand
       )}`;
       setReport(report);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [robotCommandList]);
 
   // Focuses the screen on load
@@ -96,10 +98,11 @@ const App = () => {
       tabIndex={0}
       ref={screenRef}
     >
-      <p className="InformationText">
-        {robotCommandList.length === 0 && informationText}
-      </p>
+      <p className="InformationText">{IS_STARTED && informationText}</p>
       <p className="ReportText">{report}</p>
+      {!IS_COMPLETED && !IS_STARTED && (
+        <p>commands left: {10 - robotCommandList.length}</p>
+      )}
       <Board robotCoordinate={robotCoordinate} />
       <input
         className="Input"

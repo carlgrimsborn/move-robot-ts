@@ -69,7 +69,7 @@ const convertOutOfBounds = (coordinate: Coordinate): Coordinate => {
   return [y, x];
 };
 
-export const convertArrowToRobotCommand = (direction: ArrowDirection) => {
+export const convertArrowToRobotCommand = (direction: ArrowDirection): RobotCommand => {
   switch (direction) {
     case ArrowDirection.Up:
       return RobotCommand.UP;
