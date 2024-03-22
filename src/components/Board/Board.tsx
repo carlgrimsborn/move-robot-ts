@@ -1,11 +1,9 @@
 import React from "react";
 import "./Board.css";
-import { circleCoordinates, squareCoordinates } from "../../constants";
+import { circleCoordinates, squareCoordinates } from "../../coordinates";
 
 import Row from "../Row/Row";
-import { Coordinate } from "../../types";
-
-export type BoardVariant = "square" | "circle";
+import { BoardVariant, Coordinate } from "../../types";
 
 interface IBoard {
   robotCoordinate: Coordinate;

@@ -1,12 +1,15 @@
-import { BoardVariant } from "./components/Board/Board";
-import { circleCoordinates } from "./constants";
+import { circleCoordinates } from "./coordinates";
 import {
   Coordinate,
   ArrowDirection,
-  RobotCommand,
+  RobotCommandENG,
   GeographyDirection,
+  BoardVariant,
+  RobotCommandSWE,
+  Language,
 } from "./types";
 
+// used to compare coordinates
 export const arraysAreEqual = <T>(array1: T[], array2: T[]): boolean => {
   if (array1.length !== array2.length) {
     return false;
@@ -21,7 +24,9 @@ export const arraysAreEqual = <T>(array1: T[], array2: T[]): boolean => {
   return true;
 };
 
-export const moveRobot = <T extends ArrowDirection | RobotCommand>(
+export const moveRobot = <
+  T extends ArrowDirection | RobotCommandENG | RobotCommandSWE
+>(
   coordinate: Coordinate,
   direction: T,
   variant: BoardVariant
@@ -30,19 +35,23 @@ export const moveRobot = <T extends ArrowDirection | RobotCommand>(
   let x = coordinate[1];
   switch (direction) {
     case ArrowDirection.Up:
-    case RobotCommand.UP:
+    case RobotCommandENG.UP:
+    case RobotCommandSWE.UP:
       y = y + 1;
       break;
     case ArrowDirection.Down:
-    case RobotCommand.Down:
+    case RobotCommandENG.Down:
+    case RobotCommandSWE.Down:
       y = y - 1;
       break;
     case ArrowDirection.Right:
-    case RobotCommand.Right:
+    case RobotCommandENG.Right:
+    case RobotCommandSWE.Right:
       x = x + 1;
       break;
     case ArrowDirection.Left:
-    case RobotCommand.Left:
+    case RobotCommandENG.Left:
+    case RobotCommandSWE.Left:
       x = x - 1;
       break;
     default:
@@ -59,7 +68,6 @@ export const moveRobot = <T extends ArrowDirection | RobotCommand>(
         arraysAreEqual(circleCoordinate, newCoordinate)
       ).length === 0;
 
-    console.log(outOfBoundsFound, newCoordinate);
     if (outOfBoundsFound) {
       return coordinate;
     } else {
@@ -87,29 +95,90 @@ const convertOutOfBounds = (coordinate: Coordinate): Coordinate => {
 };
 
 export const convertArrowToRobotCommand = (
-  direction: ArrowDirection
-): RobotCommand => {
+  direction: ArrowDirection,
+  language: Language
+): RobotCommandENG | RobotCommandSWE => {
   switch (direction) {
     case ArrowDirection.Up:
-      return RobotCommand.UP;
+      switch (language) {
+        case "ENG":
+          return RobotCommandENG.UP;
+        default:
+          return RobotCommandSWE.UP;
+      }
+
     case ArrowDirection.Down:
-      return RobotCommand.Down;
+      switch (language) {
+        case "ENG":
+          return RobotCommandENG.Down;
+        default:
+          return RobotCommandSWE.Down;
+      }
+
     case ArrowDirection.Right:
-      return RobotCommand.Right;
+      switch (language) {
+        case "ENG":
+          return RobotCommandENG.Right;
+        default:
+          return RobotCommandSWE.Right;
+      }
+
     case ArrowDirection.Left:
-      return RobotCommand.Left;
+      switch (language) {
+        case "ENG":
+          return RobotCommandENG.Left;
+        default:
+          return RobotCommandSWE.Left;
+      }
   }
 };
 
-export const convertCommandToGeography = (command: RobotCommand) => {
+export const convertCommandToGeography = <
+  T extends RobotCommandENG | RobotCommandSWE
+>(
+  command: T
+) => {
   switch (command) {
-    case RobotCommand.UP:
+    case RobotCommandENG.UP:
+    case RobotCommandSWE.UP:
       return GeographyDirection.North;
-    case RobotCommand.Down:
+    case RobotCommandENG.Down:
+    case RobotCommandSWE.Down:
       return GeographyDirection.South;
-    case RobotCommand.Right:
+    case RobotCommandENG.Right:
+    case RobotCommandSWE.Right:
       return GeographyDirection.East;
-    case RobotCommand.Left:
+    case RobotCommandENG.Left:
+    case RobotCommandSWE.Left:
       return GeographyDirection.West;
   }
+};
+
+// checks that the command is valid in terms of syntax and language
+export const translateCommandCharacter = (
+  command: string,
+  language: Language
+): RobotCommandENG | RobotCommandSWE | null => {
+  if (language === "ENG") {
+    if (
+      command === RobotCommandENG.UP ||
+      command === RobotCommandENG.Down ||
+      command === RobotCommandENG.Right ||
+      command === RobotCommandENG.Left
+    ) {
+      return command;
+    }
+  }
+
+  if (language === "SWE") {
+    if (
+      command === RobotCommandSWE.UP ||
+      command === RobotCommandSWE.Down ||
+      command === RobotCommandSWE.Right ||
+      command === RobotCommandSWE.Left
+    ) {
+      return command;
+    }
+  }
+  return null;
 };

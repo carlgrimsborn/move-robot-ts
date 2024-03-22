@@ -5,11 +5,18 @@ export enum ArrowDirection {
   Left = "ArrowLeft",
 }
 
-export enum RobotCommand {
+export enum RobotCommandENG {
   UP = "F",
   Down = "B",
   Right = "R",
   Left = "L",
+}
+
+export enum RobotCommandSWE {
+  UP = "G",
+  Down = "B",
+  Right = "H",
+  Left = "V",
 }
 
 export enum GeographyDirection {
@@ -20,3 +27,7 @@ export enum GeographyDirection {
 }
 
 export type Coordinate = [number, number];
+
+export type BoardVariant = "square" | "circle";
+
+export type Language = "SWE" | "ENG";

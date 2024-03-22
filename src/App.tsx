@@ -1,14 +1,23 @@
 import React, { useEffect, useRef, KeyboardEvent } from "react";
 import "./App.css";
-import Board, { BoardVariant } from "./components/Board/Board";
 import { useState } from "react";
 import {
   convertArrowToRobotCommand,
   convertCommandToGeography,
   moveRobot,
+  translateCommandCharacter,
 } from "./helpers";
 
-import { Coordinate, ArrowDirection, RobotCommand } from "./types";
+import {
+  Coordinate,
+  ArrowDirection,
+  RobotCommandENG,
+  BoardVariant,
+  Language,
+  RobotCommandSWE,
+} from "./types";
+import Input from "./components/Input/Input";
+import Board from "./components/Board/Board";
 
 const App = () => {
   const squareInitialCoordinate: Coordinate = [1, 2];
@@ -18,16 +27,18 @@ const App = () => {
   const [robotCommandList, setRobotCommandList] = useState<string>("");
   const [report, setReport] = useState<string>("");
   const [boardVariant, setBoardVariant] = useState<BoardVariant>("square");
+  const [language, setCurrentLanguage] = useState<Language>("ENG");
   const screenRef = useRef<HTMLDivElement>(null);
 
   const informationText = "press the arrow keys or use the text input to begin";
-  const inputPlaceholderText = "enter L,R,F,B";
+  const inputPlaceholder =
+    language === "ENG" ? "enter L,R,F,B" : "skriv V,H,G,B";
   const maxCommands = 10;
   const IS_STARTED = robotCommandList.length === 0;
   const IS_COMPLETED = robotCommandList.length >= 10;
 
-  const reset = () => {
-    setRobotCoordinate([0, 0]);
+  const reset = (initialCoordinate?: Coordinate) => {
+    setRobotCoordinate(initialCoordinate ? initialCoordinate : [0, 0]);
     setRobotCommandList("");
     setReport("");
   };
@@ -36,7 +47,7 @@ const App = () => {
     if (robotCommandList.length >= maxCommands) {
       const lastCommand = robotCommandList.charAt(robotCommandList.length - 1);
       const report = `Report: ${robotCoordinate} ${convertCommandToGeography(
-        lastCommand as RobotCommand
+        lastCommand as RobotCommandENG | RobotCommandSWE
       )}`;
       setReport(report);
     }
@@ -65,7 +76,7 @@ const App = () => {
       );
       setRobotCoordinate(newRobotCoordinate);
       setRobotCommandList(
-        (prev) => prev + convertArrowToRobotCommand(movementKey)
+        (prev) => prev + convertArrowToRobotCommand(movementKey, language)
       );
     }
   };
@@ -75,15 +86,12 @@ const App = () => {
     if (report.length > 0) {
       return;
     }
-    if (
-      lastCommand === RobotCommand.UP ||
-      lastCommand === RobotCommand.Down ||
-      lastCommand === RobotCommand.Right ||
-      lastCommand === RobotCommand.Left
-    ) {
+    const commandCharacter = translateCommandCharacter(lastCommand, language);
+
+    if (!!commandCharacter) {
       const newRobotCoordinate = moveRobot(
         robotCoordinate,
-        lastCommand,
+        commandCharacter,
         boardVariant
       );
       setRobotCoordinate(newRobotCoordinate);
@@ -101,13 +109,18 @@ const App = () => {
   };
 
   const toggleVariant = () => {
-    reset();
     if (boardVariant === "square") {
       setBoardVariant("circle");
+      reset();
     } else {
-      setRobotCoordinate(squareInitialCoordinate);
       setBoardVariant("square");
+      reset(squareInitialCoordinate);
     }
+  };
+
+  const onChangeLanguage = (language: Language) => {
+    setCurrentLanguage(language);
+    reset(boardVariant === "square" ? squareInitialCoordinate : undefined);
   };
 
   return (
@@ -123,16 +136,15 @@ const App = () => {
         <p>commands left: {10 - robotCommandList.length}</p>
       )}
       <Board robotCoordinate={robotCoordinate} variant={boardVariant} />
-      <input
-        className="Input"
+      <Input
         value={robotCommandList}
-        onChange={(event) =>
-          onTextInputChange(event.target.value.toUpperCase())
-        }
-        onKeyDown={(event) => handleInputKeyDown(event)}
-        placeholder={inputPlaceholderText}
+        placeholder={inputPlaceholder}
+        language={language}
+        handleInputKeyDown={handleInputKeyDown}
+        onTextInputChange={onTextInputChange}
+        onChangeLanguage={onChangeLanguage}
       />
-      <button onClick={reset} className="ResetButton">
+      <button onClick={() => reset()} className="ResetButton">
         reset
       </button>
       <div className="ToggleField">
